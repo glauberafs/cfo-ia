@@ -1,0 +1,22 @@
+"""Configuracao da API. Le tudo de variaveis de ambiente (.env na raiz do monorepo)."""
+from pathlib import Path
+
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+ROOT_ENV = Path(__file__).resolve().parents[3] / ".env"
+
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file=str(ROOT_ENV), env_file_encoding="utf-8", extra="ignore")
+
+    database_url: str = "postgresql+psycopg2://cfo:cfo@localhost:5432/cfo_ia"
+    jwt_secret: str = "troque-este-segredo-em-producao"
+    jwt_algorithm: str = "HS256"
+    access_token_expire_minutes: int = 60 * 24
+
+    # Credenciais Pluggy sao por app (client_id/secret), mas o item_id e por conexao do usuario
+    pluggy_client_id: str | None = None
+    pluggy_client_secret: str | None = None
+
+
+settings = Settings()

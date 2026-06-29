@@ -1,0 +1,25 @@
+{
+  "contas": [
+    {"id": "acc_bank", "name": "Conta Corrente", "type": "BANK", "institution": "Banco Exemplo", "balance": 3520.10},
+    {"id": "acc_card", "name": "Cartao Ultravioleta", "type": "CREDIT", "institution": "Banco Exemplo", "balance": 1280.00}
+  ],
+  "transacoes": {
+    "acc_bank": [
+      {"id": "t1", "description": "SUPERMERCADO PAO DE ACUCAR", "amount": -342.18, "date": "2026-06-03T00:00:00.000Z", "type": "DEBIT", "status": "POSTED"},
+      {"id": "t2", "description": "POSTO IPIRANGA COMBUSTIVEL", "amount": -250.00, "date": "2026-06-05T00:00:00.000Z", "type": "DEBIT", "status": "POSTED"},
+      {"id": "t3", "description": "PAGAMENTO SALARIO FOLHA", "amount": 7800.00, "date": "2026-06-05T00:00:00.000Z", "type": "CREDIT", "status": "POSTED"},
+      {"id": "t4", "description": "PIX ENVIADO JOAO SILVA", "amount": -500.00, "date": "2026-06-07T00:00:00.000Z", "type": "DEBIT", "status": "POSTED",
+       "paymentData": {"paymentMethod": "PIX", "receiver": {"name": "Joao Silva"}}},
+      {"id": "t5", "description": "TARIFA PACOTE SERVICOS", "amount": -29.90, "date": "2026-06-08T00:00:00.000Z", "type": "DEBIT", "status": "POSTED"}
+    ],
+    "acc_card": [
+      {"id": "t6", "description": "NETFLIX.COM", "amount": 55.90, "date": "2026-06-02T00:00:00.000Z", "type": "DEBIT", "status": "POSTED",
+       "merchant": {"name": "Netflix", "category": "Video Streaming"}},
+      {"id": "t7", "description": "MAGAZINE PARCELA 2/6", "amount": 150.00, "date": "2026-06-04T00:00:00.000Z", "type": "DEBIT", "status": "POSTED",
+       "creditCardMetadata": {"installmentNumber": 2, "totalInstallments": 6, "totalAmount": 900.00}},
+      {"id": "t8", "description": "MAGAZINE PARCELA 3/6", "amount": 150.00, "date": "2026-07-04T00:00:00.000Z", "type": "DEBIT", "status": "PENDING",
+       "creditCardMetadata": {"installmentNumber": 3, "totalInstallments": 6, "totalAmount": 900.00}},
+      {"id": "t9", "description": "PAGAMENTO FATURA", "amount": -800.00, "date": "2026-06-10T00:00:00.000Z", "type": "CREDIT", "status": "POSTED"}
+    ]
+  }
+}
