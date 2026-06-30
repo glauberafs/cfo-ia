@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from ..config import settings
 from ..models import Conta, Evento, MemoriaCategoria, TipoConta, TransacaoBruta, Usuario
+from .models_const import NEUTRAS_CATEGORIA
 from .normalize import chave_memoria, hash_transacao, normalizar
 from .pluggy_client import PluggyClient
 
@@ -47,6 +48,7 @@ def _processar_transacoes(db: Session, conta: Conta, transacoes: list, usuario: 
             dados_evento["categoria_id"] = memoria[chave]
             dados_evento["categoria_fonte"] = "USUARIO"
             dados_evento["categoria_confianca"] = 1.0
+            dados_evento["afeta_patrimonio"] = memoria[chave] not in NEUTRAS_CATEGORIA
 
         db.add(Evento(**dados_evento))
         novos += 1
@@ -118,6 +120,7 @@ def reaplicar_memoria(db: Session, usuario: Usuario) -> int:
             ev.categoria_id = cat
             ev.categoria_fonte = "USUARIO"
             ev.categoria_confianca = 1.0
+            ev.afeta_patrimonio = cat not in NEUTRAS_CATEGORIA
             n += 1
     db.commit()
     return n
@@ -128,6 +131,8 @@ def classificar_evento(db: Session, usuario: Usuario, evento: Evento, categoria_
     evento.categoria_id = categoria_id
     evento.categoria_fonte = "USUARIO"
     evento.categoria_confianca = 1.0
+    # categorias neutras (pagamento de fatura, neutro) nao sao despesa/receita real
+    evento.afeta_patrimonio = categoria_id not in NEUTRAS_CATEGORIA
 
     chave = chave_memoria(evento.descricao)
     if chave:

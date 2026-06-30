@@ -23,7 +23,7 @@ def _api_url() -> str:
 API_URL = _api_url()
 
 CATEGORIAS = [
-    "nao_classificado", "neutro",
+    "nao_classificado", "neutro", "pagamento_cartao",
     "mercado", "restaurante", "delivery", "padaria_cafe",
     "combustivel", "transporte_app", "transporte_publico",
     "estacionamento_pedagio", "manutencao_veiculo", "seguro_veiculo",

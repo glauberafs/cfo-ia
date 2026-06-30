@@ -29,3 +29,11 @@ NEUTRAS_PATRIMONIO = {
     Natureza.APLICACAO,
     Natureza.RESGATE,
 }
+
+# Categorias que, quando aplicadas manualmente, marcam o evento como neutro
+# (afeta_patrimonio=False): pagamento de fatura de cartao e transferencias proprias
+# nao sao despesa real -- as compras do cartao ja entram individualmente.
+NEUTRAS_CATEGORIA = {
+    "neutro",
+    "pagamento_cartao",
+}
