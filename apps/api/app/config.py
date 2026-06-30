@@ -3,7 +3,8 @@ from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-ROOT_ENV = Path(__file__).resolve().parents[3] / ".env"
+_parents = Path(__file__).resolve().parents
+ROOT_ENV = (_parents[3] / ".env") if len(_parents) > 3 else Path("/nonexistent/.env")
 
 
 class Settings(BaseSettings):
