@@ -89,6 +89,33 @@ with st.sidebar:
         del st.session_state["token"]
         st.rerun()
     st.divider()
+
+    with st.expander("Conectar banco (Pluggy)"):
+        conex = requests.get(f"{API_URL}/contas/conexoes", headers=auth_headers())
+        conex_lista = conex.json() if conex.status_code == 200 else []
+        if conex_lista:
+            st.caption("Conexoes ja registradas:")
+            for c in conex_lista:
+                st.write(f"- {c.get('instituicao') or 'banco'} (`{c['item_id'][:8]}...`)")
+        else:
+            st.caption("Nenhum banco conectado ainda.")
+        novo_item = st.text_input("item_id da conexao (gerado no MeuPluggy)", key="novo_item_id")
+        nova_inst = st.text_input("Instituicao (ex: Santander)", key="nova_instituicao")
+        if st.button("Conectar banco"):
+            if not novo_item.strip():
+                st.error("Informe o item_id.")
+            else:
+                rc = requests.post(
+                    f"{API_URL}/contas/conexoes",
+                    headers=auth_headers(),
+                    json={"item_id": novo_item.strip(), "instituicao": nova_inst.strip()},
+                )
+                if rc.status_code == 201:
+                    st.success("Banco conectado. Agora clique 'Sincronizar (Pluggy real)'.")
+                    st.rerun()
+                else:
+                    st.error(rc.json().get("detail", rc.text))
+
     if st.button("Rodar sync demo (sem credenciais)"):
         r = requests.post(f"{API_URL}/sync/demo", headers=auth_headers())
         if r.status_code == 200:
