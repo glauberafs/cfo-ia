@@ -520,29 +520,45 @@ else:
     _datas = pd.to_datetime(pend["data"], errors="coerce").dt.date
     pend = pend[_datas >= data_de]
     st.caption(f"{len(pend)} pendencia(s) a partir de {data_de.strftime('%d/%m/%Y')}.")
-    editado = st.data_editor(
-        pend,
-        column_config={
-            "id": None,
-            "data": st.column_config.TextColumn("Data", disabled=True),
-            "conta_nome": st.column_config.TextColumn("Conta", disabled=True),
-            "descricao": st.column_config.TextColumn("Descricao", disabled=True, width="large"),
-            "valor": st.column_config.NumberColumn("Valor", disabled=True, format="R$ %.2f"),
-            "categoria_id": st.column_config.SelectboxColumn("Categoria", options=CATEGORIAS),
-        },
-        hide_index=True, use_container_width=True, key="editor",
+    st.caption(
+        "Edite quantas linhas quiser -- nada e enviado enquanto voce nao clicar em "
+        "'Salvar classificacoes'. As edicoes ficam so na tela ate la (mais rapido)."
     )
-    if st.button("Salvar classificacoes", type="primary"):
+    with st.form("form_classificar", clear_on_submit=False):
+        editado = st.data_editor(
+            pend,
+            column_config={
+                "id": None,
+                "data": st.column_config.TextColumn("Data", disabled=True),
+                "conta_nome": st.column_config.TextColumn("Conta", disabled=True),
+                "descricao": st.column_config.TextColumn("Descricao", disabled=True, width="large"),
+                "valor": st.column_config.NumberColumn("Valor", disabled=True, format="R$ %.2f"),
+                "categoria_id": st.column_config.SelectboxColumn("Categoria", options=CATEGORIAS),
+            },
+            hide_index=True, use_container_width=True, key="editor",
+        )
+        salvar = st.form_submit_button("Salvar classificacoes", type="primary")
+    if salvar:
+        original = pend.set_index("id")["categoria_id"].to_dict()
         mudou = 0
+        falhas = 0
         for _, row in editado.iterrows():
-            if row["categoria_id"] != "nao_classificado":
-                requests.patch(
+            nova = row["categoria_id"]
+            # so envia o que o usuario realmente mudou nesta sessao de edicao
+            if nova != "nao_classificado" and original.get(row["id"]) != nova:
+                resp = requests.patch(
                     f"{API_URL}/eventos/{row['id']}/categoria",
-                    json={"categoria_id": row["categoria_id"]},
+                    json={"categoria_id": nova},
                     headers=auth_headers(),
                 )
-                mudou += 1
-        st.success(f"{mudou} classificada(s).")
+                if resp.status_code in (200, 204):
+                    mudou += 1
+                else:
+                    falhas += 1
+        if falhas:
+            st.warning(f"{mudou} classificada(s); {falhas} falha(s).")
+        else:
+            st.success(f"{mudou} classificada(s) de uma vez.")
         st.rerun()
 
 with st.expander("Ver todas as transacoes"):
