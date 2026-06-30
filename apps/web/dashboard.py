@@ -4,6 +4,7 @@ Isto NAO e a UI final do produto (vira frontend web de verdade depois).
 Serve para validar a API multiusuario enquanto o frontend nao existe.
 """
 import os
+from datetime import date
 
 import pandas as pd
 import requests
@@ -506,11 +507,19 @@ else:
         "(coluna 'Conta' mostra de onde vem cada uma). Escolha a categoria e clique em salvar. "
         "O sistema aprende e reaplica sozinho (na API, automaticamente nos proximos syncs)."
     )
-    filtro_conta = st.multiselect(
+    col_f1, col_f2 = st.columns(2)
+    filtro_conta = col_f1.multiselect(
         "Filtrar por conta (opcional)", options=sorted(pend["conta_nome"].unique()), key="filtro_conta_pendentes",
+    )
+    data_de = col_f2.date_input(
+        "Classificar a partir de (data)", value=date(2026, 6, 1), key="filtro_data_pendentes",
+        help="Mostra so as pendencias com data >= a escolhida. Util para focar do mes atual para frente.",
     )
     if filtro_conta:
         pend = pend[pend["conta_nome"].isin(filtro_conta)]
+    _datas = pd.to_datetime(pend["data"], errors="coerce").dt.date
+    pend = pend[_datas >= data_de]
+    st.caption(f"{len(pend)} pendencia(s) a partir de {data_de.strftime('%d/%m/%Y')}.")
     editado = st.data_editor(
         pend,
         column_config={
