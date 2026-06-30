@@ -7,6 +7,24 @@ regra cai em 'nao_classificado' para revisao manual / LLM.
 """
 from .models_const import NEUTRAS_PATRIMONIO
 
+# Taxonomia canonica (mesma lista do dashboard). Fonte unica de verdade para
+# validar categorias e para alimentar o prompt da classificacao por IA.
+CATEGORIAS_VALIDAS = [
+    "nao_classificado", "neutro", "pagamento_cartao",
+    "mercado", "restaurante", "delivery", "padaria_cafe",
+    "combustivel", "transporte_app", "transporte_publico",
+    "estacionamento_pedagio", "manutencao_veiculo", "seguro_veiculo",
+    "aluguel_financiamento", "condominio", "energia", "agua", "gas",
+    "internet_telefone", "manutencao_casa",
+    "plano_saude", "farmacia", "consultas_exames", "academia",
+    "mensalidade", "cursos", "livros_materiais",
+    "streaming", "assinaturas", "viagens", "bares_eventos", "hobbies",
+    "vestuario", "eletronicos", "casa", "presentes",
+    "tarifas_bancarias", "juros", "impostos_taxas",
+    "salario", "renda_extra", "rendimentos", "reembolsos", "outras_receitas",
+    "saque", "outros",
+]
+
 # (palavras-chave) -> categoria_id
 REGRAS = [
     (("posto", "ipiranga", "shell", "combust", "gasolina", "petrobras"), "combustivel"),

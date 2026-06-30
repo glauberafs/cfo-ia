@@ -507,6 +507,27 @@ else:
         "(coluna 'Conta' mostra de onde vem cada uma). Escolha a categoria e clique em salvar. "
         "O sistema aprende e reaplica sozinho (na API, automaticamente nos proximos syncs)."
     )
+
+    st.markdown("**Classificar com IA** -- a IA le o nome do fornecedor e sugere a categoria de cada pendente.")
+    if st.button("Classificar pendentes com IA (Claude)"):
+        with st.spinner("A IA esta classificando os fornecedores... pode levar ate ~1 min."):
+            resp = requests.post(
+                f"{API_URL}/eventos/classificar-ia", headers=auth_headers(), timeout=300,
+            )
+        if resp.status_code == 200:
+            d = resp.json()
+            st.success(
+                f"IA classificou {d['classificados']} transacao(oes) "
+                f"({d['fornecedores_reconhecidos']} fornecedor(es) reconhecido(s)). "
+                f"Restam {d['pendentes_restantes']} pendente(s). "
+                "Confira abaixo e corrija o que estiver errado (suas correcoes viram memoria)."
+            )
+            st.rerun()
+        else:
+            try:
+                st.error(resp.json().get("detail", resp.text))
+            except Exception:
+                st.error(resp.text)
     col_f1, col_f2 = st.columns(2)
     filtro_conta = col_f1.multiselect(
         "Filtrar por conta (opcional)", options=sorted(pend["conta_nome"].unique()), key="filtro_conta_pendentes",

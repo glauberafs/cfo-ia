@@ -19,5 +19,9 @@ class Settings(BaseSettings):
     pluggy_client_id: str | None = None
     pluggy_client_secret: str | None = None
 
+    # Chave da Anthropic (Claude) para classificacao automatica por IA dos pendentes.
+    # Opcional: sem ela, o botao "Classificar com IA" retorna erro amigavel.
+    anthropic_api_key: str | None = None
+
 
 settings = Settings()
